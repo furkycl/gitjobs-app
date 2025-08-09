@@ -41,16 +41,43 @@ const sampleJobs = [
     type: "Contract",
     posted: "3h ago",
   },
+  {
+    id: 6,
+    company: "Innovatech",
+    title: "Junior React Developer",
+    location: "Berlin, Germany",
+    type: "Full-Time",
+    posted: "4d ago",
+  },
 ];
 
-const fetchJobsFromAPI = () => {
-  return new Promise((resolve) => setTimeout(() => resolve(sampleJobs), 1000));
+const fetchJobsFromAPI = ({ description = "", location = "" }) => {
+  console.log(
+    `API'ye istek atılıyor: Description='${description}', Location='${location}'`
+  );
+
+  return new Promise((resolve) => {
+    const filteredJobs = sampleJobs.filter((job) => {
+      const titleMatch = job.title
+        .toLowerCase()
+        .includes(description.toLowerCase());
+      const locationMatch = job.location
+        .toLowerCase()
+        .includes(location.toLowerCase());
+      return titleMatch && locationMatch;
+    });
+    setTimeout(() => resolve(filteredJobs), 500);
+  });
 };
 
-export const fetchJobs = createAsyncThunk("jobs/fetchJobs", async () => {
-  const response = await fetchJobsFromAPI();
-  return response;
-});
+export const fetchJobs = createAsyncThunk(
+  "jobs/fetchJobs",
+  async (searchParams = {}) => {
+    const { description = "", location = "" } = searchParams;
+    const response = await fetchJobsFromAPI({ description, location });
+    return response;
+  }
+);
 
 const initialState = {
   items: [],
