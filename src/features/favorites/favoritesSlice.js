@@ -1,7 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
+const loadFavoritesFromLocalStorage = () => {
+  try {
+    const serializedState = localStorage.getItem("favoriteJobIds");
+    if (serializedState === null) {
+      return [];
+    }
+    return JSON.parse(serializedState);
+  } catch (e) {
+    console.warn("Could not load favorites from local storage", e);
+    return [];
+  }
+};
 
 const initialState = {
-  favoriteIds: [],
+  favoriteIds: loadFavoritesFromLocalStorage(),
 };
 
 const favoritesSlice = createSlice({
